@@ -1,0 +1,206 @@
+	.ORIG X3000
+	
+	LD	R6, ZERO; 	Set are counter to 0
+	NOT	R6, R1;		Not are bytes so if its a postive its a negative
+	BRn	PRESTART; 	If the result is negative then we branch to the Next start phase
+	BR	FAILEND; 	If it a negative number then we branch to the end of the program
+	
+	
+
+PRESTART	ADD	R6, R6, R1;	Set the register value to the start value
+		ADD	R6, R1, #-15;	Minus 15 from the start number
+		BRnz	START;		If R6 is a negative number or 0 it means that it is in the specified range, so we start proper execution of the program
+		BR	FAILEND; 	Else we go to the end of the program
+
+START		LD	R6, ZERO; 	Set are loop counter to 0
+		BR	RBITONE; 	Branch to the first move
+
+RBITONE		ADD	R6, R6, #1;	Incroment the loop counter by 1
+		LD	R2, ZERO;	Clear register 2 for later use for holding the final value
+		LD	R3, ZERO;	Clear register to hold the tempory value we are working on
+		LD	R4, ONE;	Set the Register 4 to the mask we want to use
+		AND	R3, R0, R4;	And the values held R0 and R4 together if positive we set the significant figure
+		BRp	SETBIT
+		BRz	RBITTWO;	If the result is 0 we continue to the next value
+
+SIGFIGONE	LD	R4, SIXTEEN;
+	ADD	R2, R2, R4;	
+
+SETBIT		AND	R5, R5, #-1;
+
+;{{ The Method between the brackets is repeated for all 16 bits just with the masks changed
+
+RBITTWO		LD	R3, ZERO;	Clear R3 for the anding
+		LD	R4, SIXTEEN;	Set R4 to the mask we want to use
+		AND	R3, R0,	R4;	And the origernal value with the mask we wanna use
+		BRp	SIGFIGTWO;	If the value of the and is Positive then we call the SigFig add function
+		BRz	RBITTHREE;	else if the value is 0 we move onto the next byte
+
+SIGFIGTWO	LD	R4, FIFTEEN;	Load the mask we want to use
+		ADD	R2, R2,	R4;	Add it to the value of R2
+
+;}} 
+
+RBITTHREE	LD	R3, ZERO;
+		LD	R4, FIFTEEN;
+		AND	R3, R0, R4;
+		BRp	SIGFIGTHREE;
+		BRz	RBITFOUR;
+
+SIGFIGTHREE	LD	R4, FOURTEEN;
+		ADD	R2, R2, R4;
+
+RBITFOUR	LD	R3, ZERO;
+		LD	R4, FOURTEEN;
+		AND	R3, R0,	R4;
+		BRp	SIGFIGFOUR;
+		BRz	RBITFIVE;
+
+SIGFIGFOUR	LD	R4, THIRTEEN;
+		ADD	R2, R2, R4;
+
+RBITFIVE	LD	R3, ZERO;
+		LD	R4, THIRTEEN;
+		AND 	R3, R0, R4;
+		BRp	SIGFIGFIVE;
+		BRz	RBITSIX;
+
+SIGFIGFIVE	LD	R4, TWELVE;
+		ADD	R2, R2,	R4;
+
+RBITSIX		LD	R3, ZERO;
+		LD	R4, TWELVE;
+		AND	R3, R0,	R4;
+		BRp	SIGFIGSIX;
+		BRz	RBITSEVEN;
+
+SIGFIGSIX	LD	R4, ELEVEN;
+		ADD	R2, R2,	R4;
+
+RBITSEVEN	LD	R3, ZERO;
+		LD	R4, ELEVEN;
+		AND	R3, R0,	R4;
+		BRp	SIGFIGSEVEN;
+		BRz	RBITEIGHT;
+
+SIGFIGSEVEN	LD	R4, TEN;
+		ADD	R2, R2, R4;
+
+RBITEIGHT	LD	R3, ZERO;
+		LD	R4, TEN;
+		AND	R3, R0,	R4;
+		BRp	SIGFIGEIGHT;
+		BRz	RBITNINE;
+
+SIGFIGEIGHT	LD	R4, NINE;
+		ADD	R2, R2, R4;
+
+RBITNINE	LD	R3, ZERO;
+		LD	R4, NINE;
+		AND	R3, R0,	R4;
+		BRp	SIGFIGNINE;
+		BRz	RBITTEN;
+
+SIGFIGNINE	LD	R4, EIGHT;
+		ADD	R2, R2,	R4;
+
+RBITTEN		LD	R3, ZERO;
+		LD	R4, EIGHT;
+		AND	R3, R0,	R4;
+		BRp	SIGFIGTEN;
+		BRz	RBITELEVEN;
+
+SIGFIGTEN	LD	R4, SEVEN;
+		ADD	R2, R2,	R4;
+
+RBITELEVEN	LD	R3, ZERO;
+		LD	R4, SEVEN;
+		AND	R3, R0,	R4;
+		BRp	SIGFIGELEVEN;
+		BRz	RBITTWELVE;
+
+SIGFIGELEVEN	LD	R4, SIX;
+		ADD	R2, R2,	R4;
+
+RBITTWELVE	LD	R3, ZERO;
+		LD	R4, SIX;
+		AND	R3, R0,	R4;
+		BRp	SIGFIGTWELVE;
+		BRz	RBITTHIRTEEN;
+
+SIGFIGTWELVE	LD	R4, FIVE
+		ADD	R2, R2, R4;
+
+RBITTHIRTEEN	LD	R3, ZERO;
+		LD	R4, FIVE;
+		AND	R3, R0, R4;
+		BRp	SIGFIGTHIRTEEN;
+		BRz	RBITFOURTEEN;
+
+SIGFIGTHIRTEEN	LD	R4, FOUR;
+		ADD	R2, R2, R4;
+
+RBITFOURTEEN	LD	R3, ZERO;
+		LD	R4, FOUR;
+		AND	R3, R0,	R4;
+		BRp	SIGFIGFOURTEEN;
+		BRz	RBITFIFTEEN;
+
+SIGFIGFOURTEEN	LD	R4, THREE;
+		ADD	R2, R2, R4;
+
+RBITFIFTEEN	LD	R3, ZERO;
+		LD	R4, THREE;
+		AND	R3, R0, R4;
+		BRp	SIGFIGFIFTTEEN;
+		BRz	RBITSIXTEEN;
+
+SIGFIGFIFTTEEN	LD	R4, TWO;
+		ADD	R2, R2, R4;
+
+RBITSIXTEEN	LD	R3, ZERO;
+		LD	R4, TWO;
+		AND 	R3, R0, R4;
+		BRp	SIGFIGSIXTEEN;
+		;NOT	R5,R5;
+		;BRp	SIGFIGTWO;
+		BR	END;		To end the program we branch to the end method
+
+SIGFIGSIXTEEN	LD	R4, ONE;
+		ADD	R2, R2, R4;
+
+END		LD	R5, ZERO;	Clear Register 5
+		LD	R3, ZERO;	Clear Register 3
+		LD	R0, ZERO;	Clear Register 0
+		ADD	R0, R0, R2;	Set Register 0 to the end value of the last bit shift
+		AND	R3, R1, R6;	If the loop counter = the number of loops
+		BRz	RBITONE;	If there not equal then we go back to the start todo another full bitshift to the right
+		LD	R1, ONE;	Else we set the register 1 to 1 to say we were successful
+		BR ENDEND;		Branch to the single exit point
+
+FAILEND		LD	R1, #-1;	Load Register 1 with -1 so we show a failed attemped
+		BR ENDEND;		Call the final method to end the program
+
+ENDEND		RET;			Single exit point of the Program 
+
+;List of masks for each bit patten
+ZERO		.FILL	#0
+ONE		.FILL	#1
+TWO		.FILL	#2
+THREE		.FILL	#4
+FOUR		.FILL	#8
+FIVE		.FILL	#16
+SIX		.FILL	#32
+SEVEN		.FILL	#64
+EIGHT		.FILL	#128
+NINE		.FILL	#256
+TEN		.FILL	#512
+ELEVEN		.FILL	#1024
+TWELVE		.FILL	#2048
+THIRTEEN	.FILL	#4096
+FOURTEEN	.FILL	#8192
+FIFTEEN		.FILL	#16384
+SIXTEEN		.FILL	#32768
+
+	.END
+	
